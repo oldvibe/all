@@ -8,8 +8,8 @@ pub fn brain_fuck(code: &str) {
         match chars[i] {
             '>' => index += 1,
             '<' => index -= 1,
-            '+' => memory[index] = memory[index].wrapping_add(1),
-            '-' => memory[index] = memory[index].wrapping_sub(1),
+            '+' => memory[index] += 1,
+            '-' => memory[index] -= 1,
             '.' => print!("{}", memory[index] as char),
             '[' => {
                 if memory[index] == 0 {
