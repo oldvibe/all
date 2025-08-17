@@ -1,4 +1,4 @@
-use std::cell::{Cell, RefCell};
+use std::cell::{ Cell, RefCell };
 
 #[derive(Debug, Default, Clone, Eq, PartialEq)]
 pub struct Blog {
@@ -13,26 +13,28 @@ impl Blog {
             states: RefCell::new(Vec::new()),
         }
     }
-
-    pub fn new_id(&self) -> usize {
-        self.states.borrow().len()
-    }
-
     pub fn new_article(&self, body: String) -> (usize, Article) {
         let id = self.new_id();
         self.states.borrow_mut().push(false);
-        let article = Article::new(id, body, self);
-        (id, article)
+        (
+            id,
+            Article {
+                id,
+                body,
+                parent: &self,
+            },
+        )
     }
-
+    pub fn new_id(&self) -> usize {
+        self.states.borrow_mut().len()
+    }
     pub fn is_dropped(&self, id: usize) -> bool {
-        *self.states.borrow().get(id).unwrap_or(&false)
+        self.states.borrow()[id]
     }
-
     pub fn add_drop(&self, id: usize) {
         let mut states = self.states.borrow_mut();
-        if *states.get(id).unwrap_or(&false) {
-            panic!("{id} is already dropped");
+        if states[id] {
+            panic!("{} is already dropped", id);
         }
         states[id] = true;
         self.drops.set(self.drops.get() + 1);
@@ -47,21 +49,14 @@ pub struct Article<'a> {
 }
 
 impl<'a> Article<'a> {
-    pub fn new(id: usize, body: String, blog: &'a Blog) -> Article<'a> {
+    pub fn new(id: usize, body: String, blog: &'a Blog) -> Article {
         Article {
             id,
             body,
             parent: blog,
         }
     }
-
     pub fn discard(self) {
-        drop(self)
-    }
-}
-
-impl<'a> Drop for Article<'a> {
-    fn drop(&mut self) {
         self.parent.add_drop(self.id);
     }
 }
