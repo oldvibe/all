@@ -205,7 +205,11 @@ mod tests {
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Clone, PartialEq)]
+
+
+
+#
+[derive(Debug, Clone, PartialEq)]
 pub struct Matrix(
    pub ( i32,  i32),
    pub ( i32,  i32)
@@ -213,4 +217,14 @@ pub struct Matrix(
 
 pub fn multiply(m: Matrix, multiplier: i32) -> Matrix {
     return Matrix((m.0.0 * multiplier, m.0.1 * multiplier), (m.1.0 * multiplier, m.1.1 * multiplier));
+}
+
+
+
+///////////////////////////////////////////////
+pub fn check_ms(message: &str) -> Result<&str, &str> {
+    if message.is_empty() || message.contains("stupid") {
+        return Err("ERROR: illegal");
+    }
+    return Ok(message);
 }
